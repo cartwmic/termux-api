@@ -103,10 +103,11 @@ public class MicRecorderAPI {
 
         protected static void postRecordCommandResult(final Context context, final Intent intent,
                                                       final RecorderCommandResult result) {
-
             ResultReturner.returnData(context, intent, out -> {
-                out.append(result.message).append("\n");
-                if (result.error != null) {
+                if (result.message != null && !result.message.isEmpty()) {
+                    out.append(result.message).append("\n");
+                }
+                if (result.error != null && !result.error.isEmpty()) {
                     out.append(result.error).append("\n");
                 }
                 out.flush();
@@ -286,9 +287,9 @@ public class MicRecorderAPI {
                                                            MediaPlayerAPI.getTimeString(duration /
                                                                                         1000));
 
-                        } catch (IllegalStateException | IOException e) {
-                            Logger.logStackTraceWithMessage(LOG_TAG, "MediaRecorder error", e);
-                            result.error = "Recording error: " + e.getMessage();
+                        } catch (Throwable t) {
+                            Logger.logStackTraceWithMessage(LOG_TAG, "Recording start error", t);
+                            result.error = "Recording start error:\n" + Logger.getStackTraceString(t);
                         }
                     }
                 }
